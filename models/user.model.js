@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
+const shortid = require('shortid');
 
 const dbConnectionPoll = require('../db');
 
 class User {
   /**
-   * 
+   * Instanciate new instances of User (Really ? this is serious stuff !)
    * @param {{username: string, email: string, password: string}} props 
    */
   constructor(props) {
@@ -27,9 +28,9 @@ class User {
         if(err) {
           return cb(err);
         }
+        connection.release();
         return cb(null, results);
       });
-      connection.release();
     });
   }
 
@@ -48,8 +49,8 @@ class User {
         if(err) {
           return cb(err);
         }
-        return cb(null, results);
         connection.release();
+        return cb(null, results);
       });
     });
   }
@@ -57,7 +58,7 @@ class User {
   /**
    * Insert a new user
    * @param {{username: string, email: string, password: string}} user 
-   * @param {function(Error, any)} cb 
+   * @param {function(Error, {affectedRows: number, insertId: number})} cb 
    */
   static create(user, cb) {
     dbConnectionPoll.getConnection((err, connection) => {
@@ -67,18 +68,41 @@ class User {
         }
         user.password = hashed;
         const sql = `INSERT INTO 
-          Users (username, email, password)
+          Users (username, email, password, confirmToken)
           VALUES (
             ${connection.escape(user.username)},
             ${connection.escape(user.email)},
-            '${user.password}'
+            '${user.password}',
+            '${User.genConfirmToken()}'
           )`;
         connection.query(sql, (err, results, fields) => {
           if(err) {
             return cb(err);
           }
+          connection.release();
           return cb(null, results);
         });
+      });
+    });
+  }
+
+  /**
+   * Delete a user by id
+   * @param {number} userId 
+   * @param {function(Error, {affectedRows: number, insertId: number})} cb 
+   */
+  static removeById(userId, cb) {
+    dbConnectionPoll.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `DELETE FROM Users WHERE id = ${connection.escape(userId)}`;
+      connection.query(sql, (err, results, fields) => {
+        if(err) {
+          return cb(err);
+        }
+        connection.release();
+        return cb(null, results);
       });
     });
   }
@@ -122,6 +146,13 @@ class User {
       }
       return cb(null, isMatch);
     });
+  }
+
+  /**
+   * Return a unique short string
+   */
+  static genConfirmToken() {
+    return shortid.generate();
   }
 }
 
