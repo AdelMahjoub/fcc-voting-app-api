@@ -17,7 +17,8 @@
     "express": "^4.15.4",
     "express-validator": "^4.1.1",
     "helmet": "^3.8.1",
-    "mysql": "^2.14.1"
+    "mysql": "^2.14.1",
+    "nodemailer": "^4.1.0"
   },
   "devDependencies": {
     "mocha": "^3.5.3",
