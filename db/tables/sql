@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `%_Users` (
+CREATE TABLE IF NOT EXISTS `Users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -9,30 +9,30 @@ CREATE TABLE IF NOT EXISTS `%_Users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 *
-CREATE TABLE IF NOT EXISTS `%_Polls` (
+CREATE TABLE IF NOT EXISTS `Polls` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `authorId` int(11) unsigned NOT NULL,
   `postDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `title` (`title`),
-  FOREIGN KEY (`authorId`) REFERENCES `%_Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`authorId`) REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 *
-CREATE TABLE IF NOT EXISTS `%_Options` (
+CREATE TABLE IF NOT EXISTS `Options` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `belongTo` int(11) unsigned NOT NULL,
   `label` varchar(255) NOT NULL,
   `voted` int(11) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`belongTo`) REFERENCES `%_Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`belongTo`) REFERENCES `Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 *
-CREATE TABLE IF NOT EXISTS `%_Votes` (
+CREATE TABLE IF NOT EXISTS `Votes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `userId` int(11) unsigned NOT NULL,
   `pollId` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`userId`) REFERENCES `%_Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (`pollId`) REFERENCES `%_Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`pollId`) REFERENCES `Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
