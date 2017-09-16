@@ -3,10 +3,7 @@
 ## Route
 ### `/api/users`
 
-|  privilege | Description  | Privilege  |
-|:-:|:-:|---|
-|   |   |   |
-
-GET /api/users/:id
-PATCH /api/users/:id
-DELETE /api/users/:id
+|   Verb	| Description  	|  Privilege 	|
+|:-:	|---	|---	|
+| GET  	|   get all users	|  admins only 	|
+| POST 	|   add a new user	|  public 	|
