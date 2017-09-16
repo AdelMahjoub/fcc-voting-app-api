@@ -56,7 +56,7 @@ const createTables = function(dbConnectionPool, statements, index, cb) {
       if(err) {
         return cb(err)
       }
-      console.log(`Query: ${index}\nSQL: ${statements[index]}\n`);
+      // console.log(`Query: ${index}\nSQL: ${statements[index]}\n`);
       index++;
       connection.release();
       createTables(dbConnectionPool, statements, index, cb);
@@ -77,13 +77,13 @@ module.exports = function() {
             throw err
           }
           connection.query('SHOW TABLES;', (err, results, fields) => {
-            console.log(
-              '\nConnection to database established\n', 
-              util.inspect({
-                threadId: connection.threadId,
-                tables: results
-              }, false, 2, true)
-            );
+            // console.log(
+            //   '\nConnection to database established\n', 
+            //   util.inspect({
+            //     threadId: connection.threadId,
+            //     tables: results
+            //   }, false, 2, true)
+            // );
             connection.release();
           });
         });
