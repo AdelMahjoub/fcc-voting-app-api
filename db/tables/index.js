@@ -1,6 +1,18 @@
+// ==============================================================
+// If this module is used separately => load env variables
+// usually it won't be used separately in a production enviroment
+// but env variables are required to test the connecton to the db
+// https://github.com/motdotla/dotenv
+// ==============================================================
 if(!Boolean(process.env.NODE_ENV)) {
   require('dotenv').config();
 }
+
+// ==============================================================
+// util  https://nodejs.org/dist/latest-v6.x/docs/api/util.html
+// fs    https://nodejs.org/dist/latest-v6.x/docs/api/fs.html
+// path  https://nodejs.org/dist/latest-v6.x/docs/api/path.html
+// ==============================================================
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -12,8 +24,6 @@ const sqlFilePath = path.resolve(__dirname, './sql');
  * Return an array of sql statements
  * The file should contain sql statements to create tables
  * Each sql statement is separated by a `*` 
- * The table names inside the file should be prefixed by %
- * The prefix will be replaced by the app name
  * @param {string} filePath 
  */
 const getQueriesFromFile = function(filePath) {
@@ -22,16 +32,12 @@ const getQueriesFromFile = function(filePath) {
       if(err) {
         reject(err);
       }
-      resolve(
-        data.toString()
-          .replace(/%/g, process.env.APP_NAME)
-          .split('*')
-      );
+      resolve(data.toString().split('*'));
     });
   });
 }
 /**
- * Query sql statements in serie using recursivity
+ * Execute sql statements in serie using recursivity
  * Create the needed tables if not exists
  * @param {object} dbConnectionPool 
  * @param {array} statements 
