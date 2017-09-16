@@ -90,14 +90,18 @@
 | username     | varchar(255)     | NO   | UNI | NULL              |                |
 | email        | varchar(255)     | NO   | UNI | NULL              |                |
 | password     | varchar(255)     | NO   |     | NULL              |                |
+| confirmToken | varchar(255)     | NO   |     | NULL              |                |
+| confirmed    | tinyint(1)       | NO   |     | 0                 |                |
 | registerDate | timestamp        | NO   |     | CURRENT_TIMESTAMP |                |
 +--------------+------------------+------+-----+-------------------+----------------+
 
-CREATE TABLE IF NOT EXISTS `Users` (
+CREATE TABLE `Users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `confirmToken` varchar(255) NOT NULL,
+  `confirmed` tinyint(1) NOT NULL DEFAULT '0',
   `registerDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
