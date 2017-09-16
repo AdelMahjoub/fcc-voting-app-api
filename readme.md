@@ -79,6 +79,17 @@
 | password     | varchar(255)     | NO   |     | NULL              |                |
 | registerDate | timestamp        | NO   |     | CURRENT_TIMESTAMP |                |
 +--------------+------------------+------+-----+-------------------+----------------+
+
+CREATE TABLE IF NOT EXISTS `Users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `registerDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 ### Polls
 ```sql
@@ -90,6 +101,15 @@
 | authorId | int(11) unsigned | NO   | MUL | NULL              |                |
 | postDate | timestamp        | NO   |     | CURRENT_TIMESTAMP |                |
 +----------+------------------+------+-----+-------------------+----------------+
+CREATE TABLE IF NOT EXISTS `Polls` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `authorId` int(11) unsigned NOT NULL,
+  `postDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `title` (`title`),
+  FOREIGN KEY (`authorId`) REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 ### Options
 ```sql
@@ -101,6 +121,14 @@
 | label    | varchar(255)     | NO   |     | NULL    |                |
 | voted    | int(11) unsigned | YES  |     | 0       |                |
 +----------+------------------+------+-----+---------+----------------+
+CREATE TABLE IF NOT EXISTS `Options` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `belongTo` int(11) unsigned NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `voted` int(11) unsigned DEFAULT '0',
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`belongTo`) REFERENCES `Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 ### Votes
 ```sql
@@ -112,5 +140,15 @@
 | pollId   | int(11) unsigned | NO   | MUL | NULL    |                |
 | optionId | int(11) unsigned | NO   | MUL | NULL    |                |
 +----------+------------------+------+-----+---------+----------------+
+CREATE TABLE IF NOT EXISTS `Votes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int(11) unsigned NOT NULL,
+  `pollId` int(11) unsigned NOT NULL,
+  `optionId` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`pollId`) REFERENCES `Polls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`optionId`) REFERENCES `Options` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
