@@ -1,14 +1,4 @@
 // ==============================================================
-// If this module is used separately => load env variables
-// usually it won't be used separately in a production enviroment
-// but env variables are required to test the connecton to the db
-// https://github.com/motdotla/dotenv
-// ==============================================================
-if(!Boolean(process.env.NODE_ENV)) {
-  require('dotenv').config();
-}
-
-// ==============================================================
 // util  https://nodejs.org/dist/latest-v6.x/docs/api/util.html
 // fs    https://nodejs.org/dist/latest-v6.x/docs/api/fs.html
 // path  https://nodejs.org/dist/latest-v6.x/docs/api/path.html
