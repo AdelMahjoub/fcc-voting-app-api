@@ -1,3 +1,7 @@
+// ==============================================================
+// bcrypt  https://github.com/kelektiv/node.bcrypt.js
+// shortid https://github.com/dylang/shortid
+// ==============================================================
 const bcrypt = require('bcrypt');
 const shortid = require('shortid');
 
