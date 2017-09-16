@@ -1,12 +1,13 @@
 const express = require('express');
 
 const api = express.Router();
+const usersApi = require('./users.api');
+const pollsApi = require('./polls.api');
+const votesApi = require('./votes.api');
 
 api
-  .route('/api')
-  .all((req, res, next) => {
-    console.log(req.headers);
-    res.json({status: res.statusCode, reason: res.statusMessage})
-  })
-
+  .use(usersApi)
+  .use(pollsApi)
+  .use(votesApi)
+  
 module.exports = api;
