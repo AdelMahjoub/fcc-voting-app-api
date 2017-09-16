@@ -12,6 +12,18 @@ usersApi
   })
 
 usersApi
+  .route('/api/users/confirm')
+  .post((req, res, next) => {
+    res.json({desc: 'confirm user registration', scope: 'public'});
+  })
+
+usersApi
+  .route('/api/users/authenticate')
+  .post((req, res ,next) => {
+    res.json({desc: 'authenticate a registred user', scope: 'public'});
+  })
+
+usersApi
   .route('/api/users/:id')
   .get((req, res, next) => {
     res.json({desc: 'get a user by id', scope: 'auth users and admins'});
