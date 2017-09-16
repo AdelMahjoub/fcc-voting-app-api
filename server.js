@@ -1,3 +1,18 @@
-const initDatabase = require('./db/tables');
+require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
-initDatabase();
+const app = express();
+const api = require('./api');
+
+app
+  .set('port', process.env.PORT || 3000)
+  .set('json spaces', 2)
+  .enable('trust proxy')
+  .use(helmet())
+  .use(api)
+  .listen(app.get('port'), () =>{
+    console.log(`Server running\nPort: ${app.get('port')}\nMode: ${app.get('env')}`);
+  })
+  
