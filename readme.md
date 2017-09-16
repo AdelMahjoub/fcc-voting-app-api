@@ -3,10 +3,23 @@
 ## Routes
 ### `/api/users`
 
-| Verb  | Description       | Privilege   |
-|--     |---                |---          |
-| GET   | get all users     | admins only |
-| POST  | add a new user    | public      |
+| Verb  | Description         | Privilege   |
+|--     |---                  |---          |
+| GET   | get all users       | admins only |
+| POST  | register a new user | public      |
+
+### `/api/users/confirm`
+
+| Verb  | Description                | Privilege   |
+|--     |---                         |---          |
+| POST  | confirm user registration  | public      |
+
+### `/api/users/authenticate`
+
+| Verb  | Description                   | Privilege   |
+|--     |---                            |---          |
+| POST  | authenticate a registred user | public      |
+
 
 ### `/api/users/:id`
 
