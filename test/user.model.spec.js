@@ -59,7 +59,7 @@ describe('User', () => {
     it('should add new users', (done) => {
       User.create(user, (err, results) => {
         assert(!Boolean(err), 'No errors expected');
-        assert.equal(results.affectedRows, 1, 'Expect a user to be removed');
+        assert.equal(results.affectedRows, 1, 'Expect a user to be inserted');
         insertedId = results.insertId;
         done();
       });
@@ -87,7 +87,7 @@ describe('User', () => {
         assert(!Boolean(err), 'No errors expected');
         assert(Boolean(row), 'Expect to return a truthy value');
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
-        assert.notDeepEqual(row, {}, 'Expect a non empty object');
+        assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
         done();        
       });
@@ -97,7 +97,7 @@ describe('User', () => {
         assert(!Boolean(err), 'No errors expected');
         assert(Boolean(row), 'Expect to return a truthy value');
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
-        assert.notDeepEqual(row, {}, 'Expect a non empty object');
+        assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
         done();        
       });
@@ -107,7 +107,7 @@ describe('User', () => {
         assert(!Boolean(err), 'No errors expected');
         assert(Boolean(row), 'Expect to return a truthy value');
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
-        assert.notDeepEqual(row, {}, 'Expect a non empty object');
+        assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
         done();        
       });
