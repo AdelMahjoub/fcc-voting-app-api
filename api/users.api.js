@@ -2,10 +2,22 @@ const express = require('express');
 
 const usersApi = express.Router();
 
+const User = require('../models/user.model');
+const ApiResponse = require('./class/ApiResponse');
+
 usersApi
   .route('/api/users')
   .get((req, res, next) => {
-    res.json({desc: 'return all users', scope: 'admins only'});
+    User.all((err, users) => {
+      if(err) {
+        return next(err);
+      }
+      return res.json(new ApiResponse({
+        req,
+        success: true,
+        data: users
+      }));
+    });
   })
   .post((req, res, next) => {
     res.json({desc: 'add a user', scope: 'public'});
