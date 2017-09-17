@@ -121,7 +121,7 @@ const exec = function(req, res, next) {
       if(err) {
         return next(err);
       }
-      mailer.sendMail(user, req, {'confirm token': user.confirmToken, 'next step': 'please use the confirm token to activate your account'})
+      mailer.sendToken(user, req)
         .then(info => {
           const data = Object.assign({}, results, {info: ` a confirm token has been sent to ${user.email}`});
           return res.json(new ApiResponse({req, success: true, data }));
