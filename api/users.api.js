@@ -1,27 +1,27 @@
 const express = require('express');
 
+const { check, validationResult } = require('express-validator/check'); // remove after all controllers are written
+const validator = require('validator'); // remove after all controllers are written
+
 const usersApi = express.Router();
 
-const User = require('../models/user.model');
-const ApiResponse = require('./class/ApiResponse');
+const User = require('../models/user.model');      // remove after all controllers are written
+const ApiResponse = require('./class/ApiResponse');// remove after all controllers are written
+
+/**
+ * Endpoints controllers
+ */
+const getAllUsers = require('./controllers/users/getAllUsers');
+const addUsers = require('./controllers/users/addUsers');
 
 usersApi
   .route('/api/users')
-  .get((req, res, next) => {
-    User.all((err, users) => {
-      if(err) {
-        return next(err);
-      }
-      return res.json(new ApiResponse({
-        req,
-        success: true,
-        data: users
-      }));
-    });
-  })
-  .post((req, res, next) => {
-    res.json({desc: 'add a user', scope: 'public'});
-  })
+  .get(getAllUsers.exec)
+  .post(
+    addUsers.validate,
+    addUsers.collectErrors,
+    addUsers.exec
+  )
 
 usersApi
   .route('/api/users/confirm')
