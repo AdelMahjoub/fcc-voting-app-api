@@ -30,4 +30,4 @@ describe('ApiResponse', () => {
       assert(response.hasOwnProperty('timestamp'));
     });
   });
-})
+});
