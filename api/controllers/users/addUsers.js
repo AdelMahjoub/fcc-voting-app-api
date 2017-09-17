@@ -41,7 +41,7 @@ const validate = [
       return new Promise((resolve, reject) => {
         dns.resolveMx(emailHostname, (err, mxRecords) => {
           if(err || !Boolean(mxRecords.length)) {
-            reject(new Error('The email address does no exists or is temporary unavailable'))
+            reject(new Error('The email address do not exists or is temporary unavailable'))
           }
           resolve(true);
         });
