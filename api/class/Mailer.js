@@ -31,7 +31,7 @@ class Mailer {
             pass: process.env.APP_MAIL_PASS
           }
         });
-        resove(transporter);
+        resolve(transporter);
       } else {
         // Generate test SMTP service account from ethereal.email
         // In development environement
@@ -63,12 +63,17 @@ class Mailer {
    * @param {Request} req 
    * @param {any} content 
    */
-  sendMail(user, req, content) {
+  sendToken(user, req) {
     const sender = this.transporter.options.auth.user; 
     const url = req.headers['x-forwarded-host'] ? req.headers['x-forwarded-host'] : `localhost`;
-    const templatePath = path.resolve('./templates/mail.ejs');
+    const templatePath = path.resolve('./templates/confirmTokenMail.ejs');
     return new Promise((resolve, reject) => {
-      ejs.renderFile(templatePath , { title: process.env.APP_NAME, data: content, url, username: user.username }, (err, mail) => {
+      ejs.renderFile(templatePath, {
+        title: process.env.APP_NAME,
+        url, 
+        confirmToken: user.confirmToken,
+        username: user.username 
+      }, (err, mail) => {
         if(err) {
           console.log(err);
           reject(err);
@@ -76,7 +81,7 @@ class Mailer {
         const options = {
           from: sender,
           to: user.email,
-          subject: `${process.env.APP_NAME} account confirm token`,
+          subject: `${process.env.APP_NAME}`,
           html: mail
         }
         this.transporter.sendMail(options, (err, info) => {
