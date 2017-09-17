@@ -7,7 +7,7 @@ class ApiResponse {
    * @param {{req: Request, success: boolean, errors: [], data: any, time: string}} props 
    */
   constructor(props = {}) {
-    this.requested = props['req'] ? `${props['req']['method']} ${props['req']['url']}` : '';
+    this.requested = props['req'] ? `${props['req']['method']} ${props['req']['url']} ${props['req']['originalUrl']}` : '';
     this.success = props['success'] || false;
     this.errors = props['errors'] || [];
     this.data = props['data'] || null;
