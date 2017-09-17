@@ -54,7 +54,7 @@ class User {
           return cb(err);
         }
         connection.release();
-        return cb(null, results);
+        return cb(null, results[0]);
       });
     });
   }
