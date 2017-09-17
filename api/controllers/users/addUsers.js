@@ -1,9 +1,11 @@
-// ==============================================================
+// =======================================================================
 // express-validator https://github.com/ctavan/express-validator
 // validator         https://github.com/chriso/validator.js
-// ==============================================================
+// dns               https://nodejs.org/dist/latest-v6.x/docs/api/dns.html
+// =======================================================================
 const { check, validationResult } = require('express-validator/check');
 const validator = require('validator');
+const dns = require('dns'); 
 
 const User = require('../../../models/user.model');
 const ApiResponse = require('../../class/ApiResponse');
@@ -29,6 +31,17 @@ const validate = [
           }
           if(Boolean(user)) {
             reject(new Error('This email address is already in use'))
+          }
+          resolve(true);
+        });
+      });
+    })
+    .custom(value => {
+      const emailHostname = value.split('@')[1];
+      return new Promise((resolve, reject) => {
+        dns.resolveMx(emailHostname, (err, mxRecords) => {
+          if(err || !Boolean(mxRecords.length)) {
+            reject(new Error('The email address does no exists or is temporary unavailable'))
           }
           resolve(true);
         });
