@@ -9,6 +9,7 @@ const dns = require('dns');
 
 const User = require('../../../models/user.model');
 const ApiResponse = require('../../class/ApiResponse');
+const mailer = require('../../class/Mailer');
 
 /**
  * req.body validation chain
@@ -101,6 +102,7 @@ const collectErrors = function(req, res, next) {
 
 /**
  * Execute the requested action: add a user
+ * Send an email with a confirm token to the new user 
  * @param {Request} req 
  * @param {Response} res 
  * @param {Callback} next 
@@ -115,7 +117,19 @@ const exec = function(req, res, next) {
     if(err) {
       return next(err);
     }
-    return res.json(new ApiResponse({req, success: true, data: results}));
+    User.get({field: 'id', value: results.insertId}, (err, user) => {
+      if(err) {
+        return next(err);
+      }
+      mailer.sendMail(user, req, {'confirm token': user.confirmToken, 'next step': 'please use the confirm token to activate your account'})
+        .then(info => {
+          const data = Object.assign({}, results, {info: ` a confirm token has been sent to ${user.email}`});
+          return res.json(new ApiResponse({req, success: true, data }));
+        })
+        .catch(err => {
+          return next(err);
+        })
+    });
   });
 }
 
