@@ -78,7 +78,7 @@
   "success"  : Boolean,                // Requested action success or fails
   "errors"   : String[],               // If the requested action fails, should contains error messages
   "data"     : Array || Object || null // Payload depending on the requested action, null if success is false
-  "timestamp": "1505656334413"         // Current timestamp
+  "timestamp": String                  // Current server's timestamp
 }
 
 ```
