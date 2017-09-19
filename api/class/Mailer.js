@@ -1,3 +1,8 @@
+// ==============================================================
+// nodemailer  https://nodemailer.com/about/
+// ejs         https://github.com/mde/ejs
+// path        https://nodejs.org/dist/latest-v6.x/docs/api/path.html
+// ==============================================================
 const nodeMailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
@@ -8,7 +13,7 @@ const path = require('path');
 class Mailer {
 
   /**
-   * 
+   * Create transport on instanciation
    */
   constructor() {
     this.createTransport()
@@ -19,6 +24,10 @@ class Mailer {
         throw err;
       })
   }
+  
+  /**
+   * Crteate a transport or a test transport for development
+   */
   createTransport() {
     return new Promise((resolve, reject) => {
       if(process.env.NODE_ENV === 'production') {
