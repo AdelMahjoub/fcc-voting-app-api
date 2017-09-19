@@ -112,6 +112,45 @@ class User {
   }
 
   /**
+   * todo: test
+   * Update user data
+   * @param {number} id
+   * @param {{username: string, email: string, password: string}} data
+   * @param {function(Error, {affectedRows: number, insertId: number})} cb
+   */
+  static update(id, data, cb) {
+    dbConnectionPoll.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `UPDATE Users SET ? WHERE id = ${connection.escape(id)}`;
+      if('password' in data) {
+        User.hashPassword(data.password, (err, hash) => {
+          if(err) {
+            return cb(err)
+          }
+          data.password = hash;
+          connection.query(sql, data, (err, results, fields) => {
+            if(err) {
+              return cb(err);
+            }
+            connection.release();
+            return cb(null, results);
+          });
+        });
+      } else {
+        connection.query(sql, data, (err, results, fields) => {
+          if(err) {
+            return cb(err);
+          }
+          connection.release();
+          return cb(null, results);
+        });
+      }
+    });
+  }
+
+  /**
    * Number of rounds to generate a salt
    */
   static saltRounds() {
