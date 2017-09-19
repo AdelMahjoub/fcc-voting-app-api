@@ -1,5 +1,5 @@
-const User = require('../../../models/user.model');
-const ApiResponse = require('../../class/ApiResponse');
+const User = require('../../../models/user.model');     // User model
+const ApiResponse = require('../../class/ApiResponse'); // Response format
 
 /**
  * Execute the requested action: get all users
