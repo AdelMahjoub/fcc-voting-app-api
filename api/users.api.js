@@ -1,25 +1,31 @@
 const express = require('express');
 
-const { check, validationResult } = require('express-validator/check'); // remove after all controllers are written
-const validator = require('validator'); // remove after all controllers are written
-
 const usersApi = express.Router();
-
-const User = require('../models/user.model');      // remove after all controllers are written
-const ApiResponse = require('./class/ApiResponse');// remove after all controllers are written
 
 /**
  * Endpoints controllers
  */
 const getAllUsers = require('./controllers/users/getAllUsers');
 const addUsers = require('./controllers/users/addUsers');
+const getUsers = require('./controllers/users/getUsers');
+const deleteUsers = require('./controllers/users/deleteUsers');
+
+/**
+ * request body/params/querystring validator
+ */
+const ValidatorGuard = require('./class/ValidatorGuard');
 
 usersApi
   .route('/api/users')
   .get(getAllUsers.exec)
   .post(
-    addUsers.validate,
-    addUsers.collectErrors,
+    [
+      ValidatorGuard.sanitizeBody,
+      ValidatorGuard.checkEmail(),
+      ValidatorGuard.checkUsername(),
+      ValidatorGuard.checkPassword()
+    ],
+    ValidatorGuard.collectErrors,
     addUsers.exec
   )
 
@@ -35,16 +41,56 @@ usersApi
     res.json({desc: 'authenticate a registred user', scope: 'public'});
   })
 
+const User = require('../models/user.model');
+const ApiResponse = require('./class/ApiResponse');
+
+
+/**
+ * Todo:
+ * Plug an AuthGuard middleware
+ * 
+ */
 usersApi
   .route('/api/users/:id')
-  .get((req, res, next) => {
-    res.json({desc: 'get a user by id', scope: 'auth users and admins'});
-  })
-  .patch((req, res, next) => {
-    res.json({desc: 'update a user', scope: 'auth users and admins'});
-  })
-  .delete((req, res, next) => {
-    res.json({desc: 'delete a user by id', scope: 'admins only'});
-  })
+  .all(
+    // Todo: add Login required here (loginRequired)
+    ValidatorGuard.sanitizeIds,
+    [ValidatorGuard.checkUserId()],
+    // Todo: check params id and authenticated user id, (authenticIdRequired)
+    // If not then the user is changing the request id param => alert
+    ValidatorGuard.collectErrors
+  )
+  .get(getUsers.exec)
+  .patch(
+    [
+      ValidatorGuard.sanitizeBody,
+      ValidatorGuard.checkEmail({optional: true}),
+      ValidatorGuard.checkUsername({optional: true}),
+      ValidatorGuard.checkPassword({optional: true}),
+      ValidatorGuard.passwordHasChanged()
+    ],
+    ValidatorGuard.collectErrors,
+    (req, res, next) => {
+      // request body and request id param are already sanitized at this point
+      // keep only the concerned keys in req.body
+      const concernedFields = ['username', 'email', 'password'];
+      Object.keys(req.body).forEach(key => {
+        if(!concernedFields.includes(key)) {
+          delete req.body[key];
+        }
+      });
+      User.update(req.params.id, req.body, (err, results) => {
+        if(err) {
+          return next(err);
+        }
+        return res.json(new ApiResponse({
+          req,
+          success: true,
+          data: results
+        }));
+      });
+    }
+  )
+  .delete(deleteUsers.exec)
 
 module.exports = usersApi;
