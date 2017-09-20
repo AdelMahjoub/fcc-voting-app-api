@@ -3,6 +3,7 @@ require('./db/tables')();
 const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const path = require('path');
 
 const app = express();
 const api = require('./api');
@@ -15,7 +16,7 @@ app
   .use(bodyParser.json())
   .use(api)
   .listen(app.get('port'), () =>{
-    console.log(`Server running\nPort: ${app.get('port')}\nMode: ${app.get('env')}`);
+    console.log(`Server running\nPort: ${app.get('port')}\nMode: ${app.get('env')}\n`);
   });
  
 module.exports = app;
