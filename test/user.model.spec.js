@@ -89,7 +89,7 @@ describe('User', () => {
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
         assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
-        done();        
+        done();
       });
     });
     it('should return a user by username', (done) => {
@@ -99,7 +99,7 @@ describe('User', () => {
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
         assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
-        done();        
+        done();
       });
     });
     it('should return a user by email', (done) => {
@@ -109,7 +109,7 @@ describe('User', () => {
         assert.equal(typeof row, 'object', 'Expect an object to be returned');
         assert.notDeepEqual(row, {}, 'Expect a non empty object to be returned');
         assert.notDeepEqual(user, row, 'Expect user from table to have extra properties');
-        done();        
+        done();
       });
     });
   });
@@ -188,6 +188,40 @@ describe('User', () => {
       }
       const firstString = strings[0];
       assert.equal(strings.filter((value) => { return value === firstString}).length, 1);
+    });
+  });
+
+  describe('.update', () => {
+    before((done) => {
+      User.create(user, (err, results) => {
+        assert(!Boolean(err), 'No errors expected');
+        assert.equal(results.affectedRows, 1, 'Expect a user to be inserted');
+        insertedId = results.insertId;
+        done();
+      });
+    });
+    after((done) => {
+      User.removeById(insertedId, (err, results) => {
+        assert(!Boolean(err), 'No errors expected');
+        assert.equal(results.affectedRows, 1, 'Expect a user to be deleted');
+        done();
+      });
+    });
+    it('should update an existing user', (done) => {
+      const updatedUser = new User({
+        username: 'jane',
+        email: 'jane@do.com',
+        password: '123457'
+      });
+      User.update(insertedId, updatedUser, (err, results) => {
+        assert(!Boolean(err), 'No error expected');
+        assert.equal(results.affectedRows, 1, 'Expect a record to be updated');
+        User.get({field: 'id', value: insertedId}, (err, record) => {
+          assert(!Boolean(err), 'No errors expected');
+          assert.equal(updatedUser.username, record.username);
+          done();
+        });
+      });
     });
   });
 });
