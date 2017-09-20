@@ -111,21 +111,17 @@ class UserController {
   static updateUser(req, res, next) {
     // request body and request id param are already sanitized
     // keep only the concerned keys in req.body
-    const concernedFields = ['username', 'email', 'password'];
     let properties = 0;
-    Object.keys(req.body).forEach(key => {
-      if(!concernedFields.includes(key)) {
-        delete req.body[key];
-      }
-    });
     Object.keys(req.body).forEach(key => {
       properties++;
     });
+    console.log(req.body)
     if(properties === 0) {
       return res.json(new ApiResponse({
         success: false,
         req,
-        errors: ['Nothing to update']
+        errors: ['Nothing to update'],
+        status: 204
       }));
     }
     User.update(req.params.id, req.body, (err, results) => {
@@ -141,7 +137,7 @@ class UserController {
   }
 
   /**
-   * Activated user account
+   * Activate user account: set confirmed field to 1
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
@@ -155,7 +151,8 @@ class UserController {
         return res.json(new ApiResponse({
           req,
           success: false,
-          errors: ['Invalid identifier or password or confirm token']
+          errors: ['Invalid identifier or password or confirm token'],
+          status: 204
         }));
       }
       User.comparePasswords(req.body.password, user.password, (err, isMatch) => {
@@ -166,14 +163,16 @@ class UserController {
           return res.json(new ApiResponse({
             req,
             success: false,
-            errors: ['Invalid identifier or password or confirm token']
+            errors: ['Invalid identifier or password or confirm token'],
+            status: 204
           }));
         }
         if(!(req.body.confirmToken === user.confirmToken)) {
           return res.json(new ApiResponse({
             req,
             success: false,
-            errors: ['Invalid identifier or password or confirm token']
+            errors: ['Invalid identifier or password or confirm token'],
+            status: 204
           }));
         }
         if(Boolean(user.confirmed)) {

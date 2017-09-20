@@ -20,6 +20,7 @@ class ApiResponse {
     this.errors = props['errors'] || [];
     this.data = props['data'] || null;
     this.timestamp = (Date.now()).toString();
+    this.status = props['status'] || 200;
   }
 }
 

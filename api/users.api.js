@@ -8,12 +8,25 @@ const UserController = require('./controllers/UserController');
 // Validate and sanitize request body/params/querystring
 const ValidatorGuard = require('./class/ValidatorGuard');
 
+// Authenticate users and protected routes
+const AuthGuard = require('./class/AuthGuard');
+
+/**
+ * GET /api/users: admins only: get all users
+ * POST /api/users: public: add a user
+ * Request body: { username, email, password }
+ */
 usersApi
-  .route('/api/users')
-  .get(UserController.getAllUsers)
+  .route('/users')
+  .get(
+    AuthGuard.tokenRequired,
+    AuthGuard.adminRequired,
+    UserController.getAllUsers
+  )
   .post(
     [
       ValidatorGuard.sanitizeBody,
+      ValidatorGuard.filterBody(['email', 'username', 'password']),
       ValidatorGuard.checkEmail(),
       ValidatorGuard.checkUsername(),
       ValidatorGuard.checkPassword()
@@ -22,11 +35,16 @@ usersApi
     UserController.addUser
   )
 
+  /**
+   * POST /api/users/confirm: public: confirm a user account
+   * Request body { identifier: (username or email), password, confirmToken(from user inbox) }
+   */
 usersApi
-  .route('/api/users/confirm')
+  .route('/users/confirm')
   .post(
     [
       ValidatorGuard.sanitizeBody,
+      ValidatorGuard.filterBody(['identifier', 'password', 'confirmToken']),
       ValidatorGuard.fieldRequired('identifier'),
       ValidatorGuard.fieldRequired('password'),
       ValidatorGuard.fieldRequired('confirmToken')
@@ -35,31 +53,43 @@ usersApi
     UserController.confirmUser
   )
 
-usersApi
-  .route('/api/users/authenticate')
-  .post((req, res ,next) => {
-    res.json({desc: 'authenticate a registred user', scope: 'public'});
-  })
-
 /**
- * Todo:
- * Plug an AuthGuard middleware
- * 
+ * POST /api/users/authenticate: public: authenticate(login) a user
+ * Request body { identifier: (username or email), password }
  */
 usersApi
-  .route('/api/users/:id')
+  .route('/users/authenticate')
+  .post(
+    [
+      ValidatorGuard.sanitizeBody,
+      ValidatorGuard.filterBody(['identifier', 'password']),
+      ValidatorGuard.fieldRequired('identifier'),
+      ValidatorGuard.fieldRequired('password')
+    ],
+    ValidatorGuard.collectErrors,
+    AuthGuard.authenticate
+  )
+
+/**
+ * All /api/users/:id all routes protected, authentication required, params id not touched required 
+ * GET get the authenticated user by id
+ * PATCH update the authenticated user
+ * DELETE delete the authenticated user, only admins
+ */
+usersApi
+  .route('/users/:id')
   .all(
-    // Todo: add Login required here (loginRequired)
+    AuthGuard.tokenRequired,
     ValidatorGuard.sanitizeIds,
+    AuthGuard.authenticIdRequired,
     [ValidatorGuard.checkUserId()],
-    // Todo: check params id and authenticated user id, (authenticIdRequired)
-    // If not then the user is changing the request id param => alert
     ValidatorGuard.collectErrors
   )
   .get(UserController.getUserById)
   .patch(
     [
       ValidatorGuard.sanitizeBody,
+      ValidatorGuard.filterBody(['username', 'email', 'password']),
       ValidatorGuard.checkEmail({optional: true}),
       ValidatorGuard.checkUsername({optional: true}),
       ValidatorGuard.checkPassword({optional: true}),
@@ -68,6 +98,9 @@ usersApi
     ValidatorGuard.collectErrors,
     UserController.updateUser
   )
-  .delete(UserController.deleteUser)
+  .delete(
+    AuthGuard.adminRequired,
+    UserController.deleteUser
+  )
 
 module.exports = usersApi;

@@ -103,6 +103,11 @@ class Mailer {
     });
   }
 
+  /**
+   * Send an account activation mail
+   * @param {User} user 
+   * @param {request} req 
+   */
   sendAccountActivation(user, req) {
     const sender = this.transporter.options.auth.user; 
     const url = req.headers['x-forwarded-host'] ? req.headers['x-forwarded-host'] : `localhost`;

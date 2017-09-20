@@ -136,7 +136,7 @@ class ValidatorGuard {
 
   /**
    * Check a required field
-   * @param {any} field 
+   * @param {string} field 
    */
   static fieldRequired(field) {
     return (
@@ -144,9 +144,26 @@ class ValidatorGuard {
       .exists()
       .withMessage(`${field} is required`)
       .not()
-      .isEmpty(`${field} is required`)
+      .isEmpty()
+      .withMessage(`${field} is required`)
     )
   }
+
+  /**
+   * Kepp only the required fields
+   * @param {[string]} fieldsToKeep 
+   */
+  static filterBody(fieldsToKeep) {
+    return function(req, res, next) {
+      Object.keys(req.body).forEach(key => {
+        if(!fieldsToKeep.includes(key)) {
+          delete req.body[key];
+        }
+      });
+      return next();
+    }
+  }
+
   /**
    * Sanitize the request body
    * Should run after Validation
