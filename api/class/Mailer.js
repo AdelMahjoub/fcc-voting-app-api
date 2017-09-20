@@ -58,7 +58,7 @@ class Mailer {
               pass: account.pass  // generated ethereal password
             }
           });
-          // console.log(account);
+          console.log(account);
           resolve(transporter);
         });
       }
@@ -66,11 +66,10 @@ class Mailer {
   }
 
   /**
-   * Send an email to user.email
+   * Send a confirmToken by email to user.email
    * Using an ejs template to render content
    * @param {User} user 
    * @param {Request} req 
-   * @param {any} content 
    */
   sendToken(user, req) {
     const sender = this.transporter.options.auth.user; 
@@ -81,6 +80,37 @@ class Mailer {
         title: process.env.APP_NAME,
         url, 
         confirmToken: user.confirmToken,
+        username: user.username 
+      }, (err, mail) => {
+        if(err) {
+          console.log(err);
+          reject(err);
+        }
+        const options = {
+          from: sender,
+          to: user.email,
+          subject: `${process.env.APP_NAME}`,
+          html: mail
+        }
+        this.transporter.sendMail(options, (err, info) => {
+          if(err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(info);
+        });
+      });
+    });
+  }
+
+  sendAccountActivation(user, req) {
+    const sender = this.transporter.options.auth.user; 
+    const url = req.headers['x-forwarded-host'] ? req.headers['x-forwarded-host'] : `localhost`;
+    const templatePath = path.resolve('./templates/accountActivationMail.ejs');
+    return new Promise((resolve, reject) => {
+      ejs.renderFile(templatePath, {
+        title: process.env.APP_NAME,
+        url, 
         username: user.username 
       }, (err, mail) => {
         if(err) {
