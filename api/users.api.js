@@ -24,9 +24,16 @@ usersApi
 
 usersApi
   .route('/api/users/confirm')
-  .post((req, res, next) => {
-    res.json({desc: 'confirm user registration', scope: 'public'});
-  })
+  .post(
+    [
+      ValidatorGuard.sanitizeBody,
+      ValidatorGuard.fieldRequired('identifier'),
+      ValidatorGuard.fieldRequired('password'),
+      ValidatorGuard.fieldRequired('confirmToken')
+    ],
+    ValidatorGuard.collectErrors,
+    UserController.confirmUser
+  )
 
 usersApi
   .route('/api/users/authenticate')
