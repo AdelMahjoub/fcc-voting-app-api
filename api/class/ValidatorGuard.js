@@ -133,6 +133,20 @@ class ValidatorGuard {
       .custom(ValidatorGuard.idExist)
     )
   }
+
+  /**
+   * Check a required field
+   * @param {any} field 
+   */
+  static fieldRequired(field) {
+    return (
+    check(field)
+      .exists()
+      .withMessage(`${field} is required`)
+      .not()
+      .isEmpty(`${field} is required`)
+    )
+  }
   /**
    * Sanitize the request body
    * Should run after Validation
