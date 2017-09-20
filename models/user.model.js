@@ -5,7 +5,7 @@
 const bcrypt = require('bcrypt');
 const shortid = require('shortid');
 
-const dbConnectionPoll = require('../db');
+const dbConnectionPool = require('../db');
 
 class User {
   /**
@@ -23,7 +23,7 @@ class User {
    * @param {function(Error, array)} cb 
    */
   static all(cb) {
-    dbConnectionPoll.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
       if(err) {
         return cb(err);
       }
@@ -44,7 +44,7 @@ class User {
    * @param {function(Error, object)} cb 
    */
   static get({field, value}, cb) {
-    dbConnectionPoll.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
       if(err) {
         return cb(err);
       }
@@ -65,7 +65,7 @@ class User {
    * @param {function(Error, {affectedRows: number, insertId: number})} cb 
    */
   static create(user, cb) {
-    dbConnectionPoll.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
       User.hashPassword(user.password, (err, hashed) => {
         if(err) {
           return cb(err);
@@ -96,7 +96,7 @@ class User {
    * @param {function(Error, {affectedRows: number, insertId: number})} cb 
    */
   static removeById(userId, cb) {
-    dbConnectionPoll.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
       if(err) {
         return cb(err);
       }
@@ -119,7 +119,7 @@ class User {
    * @param {function(Error, {affectedRows: number, insertId: number})} cb
    */
   static update(id, data, cb) {
-    dbConnectionPoll.getConnection((err, connection) => {
+    dbConnectionPool.getConnection((err, connection) => {
       if(err) {
         return cb(err);
       }
@@ -147,6 +147,51 @@ class User {
           return cb(null, results);
         });
       }
+    });
+  }
+
+  /**
+   * Get a user by email or username
+   * @param {string} identifier 
+   * @param {function(Error, User)} cb 
+   */
+  static getByEmailOrUsername(identifier, cb) {
+    dbConnectionPool.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `SELECT * FROM Users WHERE
+        email = ${connection.escape(identifier)}
+        OR username = ${connection.escape(identifier)}`;
+      connection.query(sql, (err, results, fields) => {
+        if(err) {
+          return cb(err);
+        }
+        connection.release()
+        return cb(null, results[0]);
+      });
+    });
+  }
+
+  /**
+   * Confirm a user
+   * Set confirm field to 1(TRUE)
+   * @param {number} userId 
+   * @param {function(Error, {affectedRows: number, insertId: number})} cb 
+   */
+  static confirm(userId, cb) {
+    dbConnectionPool.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `UPDATE Users SET confirmed = 1 WHERE id = ${connection.escape(userId)}`;
+      connection.query(sql, (err, results, fields) => {
+        if(err) {
+          return cb(err);
+        }
+        connection.release();
+        return cb(null, results);
+      });
     });
   }
 
