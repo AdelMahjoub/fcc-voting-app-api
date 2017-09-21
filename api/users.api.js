@@ -24,9 +24,9 @@ usersApi
     UserController.getAllUsers
   )
   .post(
+    ValidatorGuard.sanitizeBody,
+    ValidatorGuard.filterBody(['email', 'username', 'password']),
     [
-      ValidatorGuard.sanitizeBody,
-      ValidatorGuard.filterBody(['email', 'username', 'password']),
       ValidatorGuard.checkEmail(),
       ValidatorGuard.checkUsername(),
       ValidatorGuard.checkPassword()
@@ -42,9 +42,9 @@ usersApi
 usersApi
   .route('/users/confirm')
   .post(
+    ValidatorGuard.sanitizeBody,
+    ValidatorGuard.filterBody(['identifier', 'password', 'confirmToken']),
     [
-      ValidatorGuard.sanitizeBody,
-      ValidatorGuard.filterBody(['identifier', 'password', 'confirmToken']),
       ValidatorGuard.fieldRequired('identifier'),
       ValidatorGuard.fieldRequired('password'),
       ValidatorGuard.fieldRequired('confirmToken')
@@ -60,9 +60,9 @@ usersApi
 usersApi
   .route('/users/authenticate')
   .post(
+    ValidatorGuard.sanitizeBody,
+    ValidatorGuard.filterBody(['identifier', 'password']),
     [
-      ValidatorGuard.sanitizeBody,
-      ValidatorGuard.filterBody(['identifier', 'password']),
       ValidatorGuard.fieldRequired('identifier'),
       ValidatorGuard.fieldRequired('password')
     ],
@@ -87,9 +87,9 @@ usersApi
   )
   .get(UserController.getUserById)
   .patch(
+    ValidatorGuard.sanitizeBody,
+    ValidatorGuard.filterBody(['username', 'email', 'password']),
     [
-      ValidatorGuard.sanitizeBody,
-      ValidatorGuard.filterBody(['username', 'email', 'password']),
       ValidatorGuard.checkEmail({optional: true}),
       ValidatorGuard.checkUsername({optional: true}),
       ValidatorGuard.checkPassword({optional: true}),
