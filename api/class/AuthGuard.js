@@ -75,12 +75,13 @@ class AuthGuard {
           }));
         }
         if(!Boolean(user.confirmed)) {
-          return res.json(new ApiResponse({
+          const response = new ApiResponse({
             req,
             success: false,
             errors: ['Account not activated, please confirm your account first, check your inbox for an activation token'],
             status: 204
-          }));
+          })
+          return res.json(Object.assign({}, response, {confirmed: false}));
         }
         const aud = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0] : '127.0.0.1';
         const iss = process.env.APP_NAME;
