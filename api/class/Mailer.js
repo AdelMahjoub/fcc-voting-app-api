@@ -58,7 +58,7 @@ class Mailer {
               pass: account.pass  // generated ethereal password
             }
           });
-          console.log(account);
+          //console.log(account);
           resolve(transporter);
         });
       }
