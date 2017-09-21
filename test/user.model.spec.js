@@ -224,4 +224,33 @@ describe('User', () => {
       });
     });
   });
+
+  describe('.confirm', () => {
+    before((done) => {
+      User.create(user, (err, results) => {
+        assert(!Boolean(err), 'No errors expected');
+        assert.equal(results.affectedRows, 1, 'Expect a user to be inserted');
+        insertedId = results.insertId;
+        done();
+      });
+    });
+    after((done) => {
+      User.removeById(insertedId, (err, results) => {
+        assert(!Boolean(err), 'No errors expected');
+        assert.equal(results.affectedRows, 1, 'Expect a user to be deleted');
+        done();
+      });
+    });
+    it('should set the user confirmed field to 1', (done) => {
+      User.confirm(insertedId, (err, {affectedRows, insertId}) => {
+        assert(!Boolean(err), 'No errors expected');
+        assert.equal(affectedRows, 1, 'Expect a row to be affected');
+        User.get({field: 'id', value: insertedId}, (err, user) => {
+          assert(!Boolean(err), 'No errors expected');
+          assert.equal(user.confirmed, 1, 'Expect the confirmed field to equal 1');
+          done();
+        });
+      });
+    });
+  });
 });
