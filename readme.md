@@ -1,5 +1,8 @@
 # Api
 ---
+
+**A detailed description of the implemented routes is available [here](https://documenter.getpostman.com/view/1662201/voting-app/6tgW29i)**
+
 ## Routes
 ### `/api/users`
 
