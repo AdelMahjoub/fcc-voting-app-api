@@ -11,8 +11,6 @@ const ApiResponse = require('./ApiResponse');        // Response format
 
 const User = require('../../models/user.model');     // User model
 const Poll = require('../../models/poll.model');     // Poll model
-const Option = require('../../models/option.model'); // Option model
-const Vote = require('../../models/vote.model');     // Vote model
 
 /**
  * Handle all validation
