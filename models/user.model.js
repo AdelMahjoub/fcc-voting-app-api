@@ -84,7 +84,7 @@ class User {
             return cb(err);
           }
           connection.release();
-          return cb(null, results);
+          return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId});
         });
       });
     });
@@ -106,7 +106,7 @@ class User {
           return cb(err);
         }
         connection.release();
-        return cb(null, results);
+        return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId});
       });
     });
   }
@@ -135,7 +135,7 @@ class User {
               return cb(err);
             }
             connection.release();
-            return cb(null, results);
+            return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId});
           });
         });
       } else {
@@ -144,7 +144,7 @@ class User {
             return cb(err);
           }
           connection.release();
-          return cb(null, results);
+          return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId});
         });
       }
     });
@@ -190,7 +190,7 @@ class User {
           return cb(err);
         }
         connection.release();
-        return cb(null, results);
+        return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId});
       });
     });
   }
