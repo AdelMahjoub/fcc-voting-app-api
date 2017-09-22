@@ -1,23 +1,40 @@
 const express = require('express');
+const { check, validationResult } = require('express-validator/check');
 
 const votesApi = express.Router();
 
-votesApi
-  .route('/api/votes')
-  .post((req, res, next) => {
-    res.json({desc: 'vote in a poll', scope: 'auth users'});
-  })
+const AuthGuard = require('./class/AuthGuard');
+const ValidatorGuard = require('./class/ValidatorGuard');
+
+const VoteController = require('./controllers/VoteController');
+
+const dbConnection = require('../db');
+const ApiResponse = require('./class/ApiResponse');
 
 votesApi
-  .route('/api/votes/users/:userId')
-  .get((req, res, next) => {
-    res.json({desc: 'get all votes of a user', scope: 'concerned auth user and admins'});
-  })
+  .route('/votes')
+  .post(
+    AuthGuard.tokenRequired,
+    ValidatorGuard.sanitizeBody,
+    ValidatorGuard.filterBody(['pollId', 'optionId']),
+    [
+      ValidatorGuard.fieldRequired('pollId')
+      .isNumeric()
+      .withMessage('No such poll'),
+      ValidatorGuard.fieldRequired('optionId')
+      .isNumeric()
+      .withMessage('No such option')
+    ],
+    ValidatorGuard.collectErrors,
+    VoteController.vote
+  )
 
 votesApi
-  .route('/api/votes/users/:userId/polls/:pollId')
-  .get((req, res, next) => {
-    res.json({desc: 'return the voted option', scope: 'concerned auth user and admins'})
-  })
+  .route('/votes/polls/:pollId')
+  .get(
+    AuthGuard.tokenRequired,
+    ValidatorGuard.sanitizeIds,
+    VoteController.myVotedOption
+  )
 
 module.exports = votesApi;
