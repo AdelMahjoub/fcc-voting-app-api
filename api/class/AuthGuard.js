@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user.model');
+const Poll = require('../../models/poll.model');
 const ApiResponse = require('./ApiResponse');
 
 class AuthGuard {
@@ -135,6 +136,33 @@ class AuthGuard {
       }));
     }
     return next();
+  }
+
+  static authorIsUser(req, res, next) {
+    const userId = req.user.id;
+    const pollId = req.params.id;
+    Poll.get({field: 'id', value: userId, scope: 'Users'}, (err, polls) => {
+      if(err) {
+        return next(err);
+      }
+      if(!Boolean(polls.length)) {
+        return res.json(new ApiResponse({
+          req,
+          success: false,
+          errors: ['You have no polls']
+        }));
+      }
+      const candidatePoll = polls.filter(poll => poll.pollId === pollId)[0];
+      // console.log(candidatePoll);
+      if(!Boolean(candidatePoll)) {
+        return res.json(new ApiResponse({
+          req,
+          success: false,
+          errors: ['You are not the author of this poll']
+        }));
+      }
+      return next();
+    });
   }
 }
 
