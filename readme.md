@@ -28,8 +28,8 @@
 
 | Verb   | Description      | Privilege 	                   |
 |--      |---               |---                             |
-| GET    | get a user by id | authenticated user and admins  |
-| PATCH  | update a user    | authenticated user and admins  |
+| GET    | get a user by id | authenticated user             |
+| PATCH  | update a user    | authenticated user             |
 | DELETE | delete a user    | admins only                    |
 
 ### `/api/polls`
@@ -37,41 +37,39 @@
 | Verb   | Description      | Privilege 	                   |
 |--      |---               |---                             |
 | GET    | get all polls    | public                         |
-| POST   | add a poll       | authenticated users and admins |
+| POST   | add a poll       | authenticated users            |
 
 ### `/api/polls/:id`
 
 | Verb   | Description      | Privilege 	                   |
 |--      |---               |---                             |
 | GET    | get a poll by id | public                         |
-| PATCH  | update a poll    | authenticated user and admins  |
-| DELETE | delete a poll    | authenticated user and admins  |
+| PATCH  | update a poll    | authenticated user             |
+| DELETE | delete a poll    | authenticated user             |
+
+### `/api/polls/users/:id`
+
+| Verb   | Description      | Privilege 	                   |
+|--      |---               |---                             |
+| GET    | get a user polls | public                         |
 
 ### `/api/votes`
 
 | Verb   | Description      | Privilege 	                   |
 |--      |---               |---                             |
-| GET    | get all votes    | admins only                    |
+| POST   | vote in a poll   | authenticated users            |
 
 ### `/api/votes/users/:userId`
 
 | Verb   | Description             |Privilege 	                   |
 |--      |---                      |---                            |
-| GET    | get all votes of a user | authenticated user and admins |
-| DELETE | retract all votes       | authenticated user and admins |
+| GET    | get all votes of a user | authenticated user            |
 
 ### `/api/votes/users/:userId/polls/:pollId`
 
 | Verb   | Description                         | Privilege 	                  |
 |--      |---                                  |---                           |
-| GET    | return the voted option in the poll | authenticated user and admins|
-| DELETE | retract a vote from a poll          | authenticated user and admins|
-
-### `/api/votes/users/:userId/polls/:pollId/options/:optionId`
-
-| Verb   | Description      |Privilege 	                     |
-|--      |---               |---                             |
-| POST   | vote in a poll   | authenticated users and admins |
+| GET    | return the voted option in the poll | authenticated user           |
 
 ## Responses
 ### Format
