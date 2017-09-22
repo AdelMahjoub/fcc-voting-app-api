@@ -7,12 +7,12 @@ const assert = require('assert');
 class UserController {
 
   /**
-   * 
+   * Return all user in the response
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
    */
-  static getAllUsers(req, res, next) {
+  static all(req, res, next) {
     User.all((err, users) => {
       if(err) {
         return next(err);
@@ -22,35 +22,35 @@ class UserController {
   }
 
   /**
-   * 
-   * @param {Request} req 
-   * @param {Response} res 
-   * @param {callback} next 
+   * return the requested user in the response
+   * @param {string} field 
    */
-  static getUserById(req, res, next) {
-    const id = parseInt(ValidatorGuard.decodeAndEscape(req.params.id), 10);
-    User.get({field: 'id', value: id}, (err, user) => {
-      if(err) {
-        return next(err);
-      }
-      const data = Object.assign({}, user);
-      delete data.password;
-      delete data.confirmToken;
-      return res.json(new ApiResponse({
-        req,
-        success: true,
-        data
-      }));
-    });
+  static get(field) {
+    return function(req, res, next) {
+      const id = parseInt(ValidatorGuard.decodeAndEscape(req.params.id), 10);
+      User.get({field, value: id}, (err, user) => {
+        if(err) {
+          return next(err);
+        }
+        const data = Object.assign({}, user);
+        delete data.password;
+        delete data.confirmToken;
+        return res.json(new ApiResponse({
+          req,
+          success: true,
+          data
+        }));
+      });
+    }
   }
 
   /**
-   * 
+   * Add a user and respond
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
    */
-  static addUser(req, res, next) {
+  static add(req, res, next) {
     // request body is already sanitized by the previous middleware: ValidatorGuard.sanitizeBody
     const candidate = new User({
       username: req.body['username'],
@@ -67,7 +67,7 @@ class UserController {
         }
         mailer.sendToken(user, req)
           .then(info => {
-            console.log(info);
+            //console.log(info);
             return;
           })
           .catch(err => {
@@ -83,12 +83,12 @@ class UserController {
   }
 
   /**
-   * 
+   * Delete a user and respond
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
    */
-  static deleteUser(req, res, next) {
+  static delete(req, res, next) {
     const id = parseInt(ValidatorGuard.decodeAndEscape(req.params.id), 10);
     User.removeById(id, (err, results) => {
       if(err) {
@@ -103,19 +103,19 @@ class UserController {
   }
 
   /**
-   * 
+   * Update a user and respond
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
    */
-  static updateUser(req, res, next) {
+  static update(req, res, next) {
     // request body and request id param are already sanitized
     // keep only the concerned keys in req.body
     let properties = 0;
     Object.keys(req.body).forEach(key => {
       properties++;
     });
-    console.log(req.body)
+    //console.log(req.body)
     if(properties === 0) {
       return res.json(new ApiResponse({
         success: false,
@@ -137,12 +137,12 @@ class UserController {
   }
 
   /**
-   * Activate user account: set confirmed field to 1
+   * Activate user account: set confirmed field to 1, and respond
    * @param {Request} req 
    * @param {Response} res 
    * @param {callback} next 
    */
-  static confirmUser(req, res, next) {
+  static confirm(req, res, next) {
     User.getByEmailOrUsername(req.body.identifier, (err, user) => {
       if(err) {
         return next(err);
@@ -188,7 +188,7 @@ class UserController {
           }
           mailer.sendAccountActivation(user, req)
             .then(info => {
-              console.log(info);
+              //console.log(info);
               return;
             })
             .catch(err => {
