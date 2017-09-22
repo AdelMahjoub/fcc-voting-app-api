@@ -21,6 +21,37 @@ class Poll {
         FROM Polls 
         LEFT JOIN Users ON Polls.userId = Users.id
         LEFT JOIN Options ON Polls.id = Options.pollId
+        ORDER BY Polls.postDate DESC
+      `;
+      connection.query(sql, (err, results, fields) => {
+        if(err) {
+          return cb(err);
+        }
+        connection.release();
+        return cb(null, Poll.groupPollsAndOptions(results));
+      });
+    });
+  }
+
+  /**
+   * Get a poll by scope.field:value
+   * @param {{field: string, value:any, scope: string}} param0 
+   * @param {function(Error, [object])} cb 
+   * @param {string} scopeTable 
+   */
+  static get({field, value, scope = 'Polls'}, cb) {
+    dbConnectionPool.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `SELECT 
+        Polls.id as pollId, Polls.title, Polls.postDate,
+        Users.username as author,
+        Options.label as optionLabel, Options.id as optionId, Options.voted
+        FROM Polls
+        LEFT JOIN Users ON Polls.userId = Users.id
+        LEFT JOIN Options ON Polls.id = Options.pollId
+        WHERE ${connection.escapeId(scope)}.${connection.escapeId(field)} = ${connection.escape(value)}
       `;
       connection.query(sql, (err, results, fields) => {
         if(err) {
@@ -65,6 +96,27 @@ class Poll {
             }
           });
         });
+      });
+    });
+  }
+
+  /**
+   * Delete a poll by id
+   * @param {number} pollId 
+   * @param {function(Error, {affectedRows: number, insertId: number})} cb 
+   */
+  static remove(pollId, cb) {
+    dbConnectionPool.getConnection((err, connection) => {
+      if(err) {
+        return cb(err);
+      }
+      const sql = `DELETE FROM Polls WHERE id = ${connection.escape(pollId)}`;
+      connection.query(sql, (err, results, fields) => {
+        if(err) {
+          return cb(err);
+        }
+        connection.release();
+        return cb(null, {affectedRows: results.affectedRows, insertId: results.insertId})
       });
     });
   }
