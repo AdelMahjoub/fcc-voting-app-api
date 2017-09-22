@@ -8,8 +8,8 @@
     "start": "NODE_ENV=production node server.js",
     "test": "mocha"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["polls", "votes", "express", "nodejs", "mysql"],
+  "author": "Adel Mahjoub",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^1.0.3",
