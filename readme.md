@@ -59,13 +59,7 @@
 |--      |---               |---                             |
 | POST   | vote in a poll   | authenticated users            |
 
-### `/api/votes/users/:userId`
-
-| Verb   | Description             |Privilege 	                   |
-|--      |---                      |---                            |
-| GET    | get all votes of a user | authenticated user            |
-
-### `/api/votes/users/:userId/polls/:pollId`
+### `/api/votes/polls/:pollId`
 
 | Verb   | Description                         | Privilege 	                  |
 |--      |---                                  |---                           |
