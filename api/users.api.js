@@ -12,8 +12,8 @@ const ValidatorGuard = require('./class/ValidatorGuard');
 const AuthGuard = require('./class/AuthGuard');
 
 /**
- * GET /api/users: admins only: get all users
- * POST /api/users: public: add a user
+ * GET : /api/users: admins only: get all users
+ * POST: /api/users: public: add a user
  * Request body: { username, email, password }
  */
 usersApi
@@ -21,7 +21,7 @@ usersApi
   .get(
     AuthGuard.tokenRequired,
     AuthGuard.adminRequired,
-    UserController.getAllUsers
+    UserController.all
   )
   .post(
     ValidatorGuard.sanitizeBody,
@@ -32,11 +32,11 @@ usersApi
       ValidatorGuard.checkPassword()
     ],
     ValidatorGuard.collectErrors,
-    UserController.addUser
+    UserController.add
   )
 
   /**
-   * POST /api/users/confirm: public: confirm a user account
+   * POST: /api/users/confirm: public: confirm a user account
    * Request body { identifier: (username or email), password, confirmToken(from user inbox) }
    */
 usersApi
@@ -50,11 +50,11 @@ usersApi
       ValidatorGuard.fieldRequired('confirmToken')
     ],
     ValidatorGuard.collectErrors,
-    UserController.confirmUser
+    UserController.confirm
   )
 
 /**
- * POST /api/users/authenticate: public: authenticate(login) a user
+ * POST: /api/users/authenticate: public: authenticate(login) a user
  * Request body { identifier: (username or email), password }
  */
 usersApi
@@ -71,10 +71,10 @@ usersApi
   )
 
 /**
- * All /api/users/:id all routes protected, authentication required, params id not touched required 
- * GET get the authenticated user by id
- * PATCH update the authenticated user
- * DELETE delete the authenticated user, only admins
+ * All   : /api/users/:id all routes protected, authentication required, params id not touched required 
+ * GET   : get the authenticated user by id
+ * PATCH : update the authenticated user
+ * DELETE: delete the authenticated user, only admins
  */
 usersApi
   .route('/users/:id')
@@ -85,7 +85,7 @@ usersApi
     [ValidatorGuard.checkUserId()],
     ValidatorGuard.collectErrors
   )
-  .get(UserController.getUserById)
+  .get(UserController.get('id'))
   .patch(
     ValidatorGuard.sanitizeBody,
     ValidatorGuard.filterBody(['username', 'email', 'password']),
@@ -96,11 +96,11 @@ usersApi
       ValidatorGuard.passwordHasChanged()
     ],
     ValidatorGuard.collectErrors,
-    UserController.updateUser
+    UserController.update
   )
   .delete(
     AuthGuard.adminRequired,
-    UserController.deleteUser
+    UserController.delete
   )
 
 module.exports = usersApi;
