@@ -4,13 +4,9 @@
 class ApiResponse {
   /**
    * requested: send back the client requested route,
-   * 
    * success  : indicate to the client if the request was a success,
-   * 
    * errors   : a list of errors if the client request failed,
-   * 
    * data     : the requested data,
-   * 
    * timestamp: timestamp when the response is sent
    * @param {{req: Request, success: boolean, errors: [], data: any, time: string}} props 
    */
