@@ -8,16 +8,12 @@ const pollsApi = require('./polls.api'); // Handle /api/polls/* routes
 const votesApi = require('./votes.api'); // Handle /api/votes/* routes
 const ApiResponse = require('./class/ApiResponse');
 
-// Required for prototyping: to delete
-const AuthGuard = require('./class/AuthGuard');
-
-
 api
   .use('/api', usersApi)
   .use('/api', pollsApi)
   .use('/api', votesApi)
   .use('*', (req, res, next) => {
-    const err = new Error('Not found');
+    const err = new Error('Bad request');
     err.status = 400;
     return next(err);
   })
