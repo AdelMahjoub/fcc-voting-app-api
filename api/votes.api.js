@@ -8,9 +8,6 @@ const ValidatorGuard = require('./class/ValidatorGuard');
 
 const VoteController = require('./controllers/VoteController');
 
-const dbConnection = require('../db');
-const ApiResponse = require('./class/ApiResponse');
-
 votesApi
   .route('/votes')
   .post(
